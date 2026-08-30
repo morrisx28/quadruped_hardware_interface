@@ -26,6 +26,7 @@ Motor::Motor(DM_Motor_Type motor_type, Control_Mode ctrl_mode,uint16_t can_id, u
         :  Motor_Type(motor_type),mode(ctrl_mode),Master_id(master_id), Can_id(can_id){
     this->limit_param = damiao::limit_param[motor_type];
     this->last_time_= std::chrono::steady_clock::now();
+    this->last_feedback_time_ = std::chrono::steady_clock::now();
 }
 
 void Motor::updateTimeInterval() 
@@ -48,6 +49,17 @@ void Motor::receive_data(float q, float dq, float tau)
     this->state_q = q;
     this->state_dq = dq;
     this->state_tau = tau;
+}
+
+void Motor::receive_data(float q, float dq, float tau, uint8_t err, float t_mos, float t_rotor)
+{
+    this->state_q = q;
+    this->state_dq = dq;
+    this->state_tau = tau;
+    this->state_err = err;
+    this->state_t_mos = t_mos;
+    this->state_t_rotor = t_rotor;
+    this->last_feedback_time_ = std::chrono::steady_clock::now();
 }
 
 void Motor::set_param(int key, float value)
@@ -498,8 +510,11 @@ void Motor_Control::canframeCallback(can_value_type& value)
 
         float receive_dq = uint_to_float(dq_uint, -limit_param_receive.DQ_MAX, limit_param_receive.DQ_MAX, 12);
         float receive_tau = uint_to_float(tau_uint, -limit_param_receive.TAU_MAX, limit_param_receive.TAU_MAX, 12);
-        m->receive_data(receive_q, receive_dq, receive_tau); 
-        
+        uint8_t err = (value.data[0] >> 4) & 0x0F;
+        float t_mos = static_cast<float>(value.data[6]);
+        float t_rotor = static_cast<float>(value.data[7]);
+        m->receive_data(receive_q, receive_dq, receive_tau, err, t_mos, t_rotor);
+
         m->updateTimeInterval();
        
        double interval=m->getTimeInterval() ;

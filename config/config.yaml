@@ -1,2 +1,26 @@
 domain_id: 1  # Domain id
-interface: "lo" # Interface 
+interface: "lo" # Interface
+
+dev_sn: ""  # USB2CANFD serial number; run ./scan_canfd_sn to list connected devices
+set_zero: false
+
+# FL hip thigh calf FR .. RR .. RL ..
+can_id: [0x07, 0x08, 0x09, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x0a, 0x0b, 0x0c]
+mst_id: [0x17, 0x18, 0x19, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x1a, 0x1b, 0x1c]
+motor_type: [DM4310, DM4310, DM4310, DM4310, DM4310, DM4310, DM4310, DM4310, DM4310, DM4310, DM4310, DM4310]
+motor_offset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+direction: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+# TODO: fill in the real per-joint ranges; the clamp is a no-op while these are infinite
+pos_limit:
+  - [-.inf, .inf]
+  - [-.inf, .inf]
+  - [-.inf, .inf]
+  - [-.inf, .inf]
+  - [-.inf, .inf]
+  - [-.inf, .inf]
+  - [-.inf, .inf]
+  - [-.inf, .inf]
+  - [-.inf, .inf]
+  - [-.inf, .inf]
+  - [-.inf, .inf]
+  - [-.inf, .inf]
